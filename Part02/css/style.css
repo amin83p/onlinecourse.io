@@ -87,9 +87,10 @@ body{
 
 
 @media (max-width:767px){
-  .navbar-brand:focus, .navbar-brand{
+  /* .navbar-brand:focus, .navbar-brand{
     margin-left:10px;
-  }
+  } */
+  
   .menu{
     width: 80%;
     margin-right:auto;
