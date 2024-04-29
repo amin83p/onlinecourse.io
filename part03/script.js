@@ -42,8 +42,8 @@ var names = ["Yaakov", "John", "Jen", "Jason", "Paul", "Frank", "Larry", "Paula"
 // See Lecture 50, part 1
 for (var item in names) {
   if (names[item][0]=="j" || names[item][0]=="J") {
-    this.GoodBye.speak(names[item]);
+    GoodBye.speak(names[item]);
   } else {
-    this.Hello.speak(names[item]);
+    Hello.speak(names[item]);
   }
 }
