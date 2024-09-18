@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8"> <!-- Decrease scale for smaller view -->
+    <title>Amin Paknejad Time Sheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa; /* Light blue background */
+            color: #333;
+            margin: 0;
+            padding: 10px; /* Reduced padding */
+            max-width: 1200px; /* Set a maximum width for the page */
+            margin-left: auto; /* Center the page */
+            margin-right: auto; /* Center the page */
+        }
+
+        header {
+            text-align: left; /* Align content to the left */
+            background-color: #00796b; /* Header background color */
+            color: white; /* Header text color */
+            padding: 10px; /* Padding for header */
+        }
+
+        h1 {
+            margin: 0; /* Remove default margin */
+        }
+
+        .employee-info {
+            margin-bottom: 10px; /* Space between employee info and title */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #00796b;
+            padding: 8px; /* Reduced padding for table cells */
+            text-align: center;
+        }
+
+        th {
+            background-color: #b2ebf2; /* Lighter blue for header */
+        }
+
+        select, input[type="text"], input[type="date"] {
+            width: 100%; /* Full width */
+            padding: 6px; /* Reduced padding for inputs */
+            border-radius: 4px; /* Rounded corners */
+            border: 1px solid #00796b; /* Border color */
+            box-sizing: border-box; /* Include padding in width calculation */
+            font-size: 14px; /* Decreased font size */
+        }
+
+        .add-row, .submit-row {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 8px 12px; /* Reduced button padding */
+            background-color: #00796b; /* Button color */
+            color: white; /* Text color */
+            border: none; /* No border */
+            border-radius: 4px; /* Rounded corners for button */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 14px; /* Decreased font size for button */
+        }
+
+        button:hover {
+            background-color: #004d40; /* Darker shade on hover */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #00796b;
+        }
+		#activityTotals{
+			text-align: left;
+	
+		}
+		#activityTotals p{
+            margin-bottom: 20px;
+	
+		}
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://cdn-icons-png.flaticon.com/512/2399/2399925.png" alt="Amin Paknejad Logo" width="150"> <!-- Replace with actual logo path -->
+    <h2>Time Sheet</h2>
+    <div class="employee-info">
+        <h3>Employee Name: John Doe</h3> <!-- Replace with actual employee name -->
+        <h3>Position: Teacher </h3> <!-- Replace with actual position -->
+    </div>
+</header>
+
+<table id="timeSheet">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Activity</th>
+            <th>Time (hours)</th>
+            <th>Student Name</th>
+            <th>Comment</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Rows will be added here -->
+    </tbody>
+    <tfoot>
+        <tr>
+            <td><strong>Total Hours:</strong></td>
+            <td id="totalHours">0.0</td>
+            <td><strong>Activity Totals:</strong></td>
+            <td colspan="3" id="activityTotals">No data</td>
+        </tr>
+    </tfoot>
+</table>
+
+<div class="add-row">
+    <button onclick="addRow()">Add Row</button>
+</div>
+
+<div class="submit-row">
+    <button onclick="submitForm()">Submit</button>
+    <button onclick="sortByDate()">Sort by Date</button> <!-- New button added -->
+</div>
+
+<footer>
+    &copy; 2024 Amin Paknejad. All rights reserved.<br />
+    Contact us at info@aminpaknejad.com
+</footer>
+
+<script src='sc2.js'>
+    <!-- const activities = ['LINC', 'EAL', 'MATH', 'Science']; -->
+
+    <!-- function addRow() { -->
+        <!-- const table = document.getElementById("timeSheet").getElementsByTagName('tbody')[0]; -->
+        
+        <!-- const newRow = table.insertRow(); -->
+        
+        <!-- // Date cell -->
+        <!-- const dateCell = newRow.insertCell(0); -->
+        <!-- dateCell.innerHTML = `<input type="date" value="${new Date().toISOString().split('T')[0]}">`; -->
+
+        <!-- // Activity cell -->
+        <!-- const activityCell = newRow.insertCell(1); -->
+        <!-- activityCell.innerHTML = `<select>${activities.map(activity => `<option value="${activity}">${activity}</option>`).join('')}</select>`; -->
+
+        <!-- // Time cell -->
+        <!-- const timeCell = newRow.insertCell(2); -->
+        <!-- timeCell.innerHTML = `<select>${Array.from({length: 17}, (_, i) => `<option value="${(i + 1) / 2}">${(i + 1) / 2}</option>`).join('')}</select>`; -->
+
+         <!-- // Student Name cell -->
+         <!-- const studentCell = newRow.insertCell(3); -->
+         <!-- studentCell.innerHTML = `<input type="text" placeholder="Enter student name">`; -->
+
+         <!-- // Comment cell -->
+         <!-- const commentCell = newRow.insertCell(4); -->
+         <!-- commentCell.innerHTML = `<input type="text" placeholder="Enter comment">`; -->
+
+         <!-- // Action cell with delete button -->
+         <!-- const actionCell = newRow.insertCell(5); -->
+         <!-- actionCell.innerHTML = `<button onclick="deleteRow(this)">Delete</button>`; -->
+    <!-- } -->
+
+    <!-- function deleteRow(button) { -->
+        <!-- const row = button.parentNode.parentNode; -->
+        <!-- row.parentNode.removeChild(row); // Remove the row from the table -->
+    <!-- } -->
+
+    <!-- function submitForm() { -->
+        <!-- const table = document.getElementById("timeSheet"); -->
+        
+        <!-- const data = []; -->
+        
+        <!-- for (let i = 1, row; row = table.rows[i]; i++) { // Start from 1 to skip header -->
+            <!-- const date = row.cells[0].children[0].value; -->
+            <!-- const activity = row.cells[1].children[0].value; -->
+            <!-- const time = row.cells[2].children[0].value; -->
+             <!-- const studentName = row.cells[3].children[0].value; // Get student name -->
+             <!-- const comment = row.cells[4].children[0].value; -->
+
+             <!-- data.push({ date, activity, time, studentName, comment }); -->
+         <!-- } -->
+         
+         <!-- console.log("Submitting Data:", data); -->
+
+         <!-- alert("Form submitted! Check console for data."); -->
+     <!-- } -->
+	 
+	 <!-- function sortByDate() { -->
+        <!-- const table = document.getElementById("timeSheet"); -->
+        <!-- const rows = Array.from(table.rows).slice(1); // Get all data rows (skip header) -->
+
+        <!-- // Sort rows based on date -->
+        <!-- rows.sort((a, b) => { -->
+            <!-- const dateA = new Date(a.cells[0].children[0].value); -->
+            <!-- const dateB = new Date(b.cells[0].children[0].value); -->
+            <!-- return dateA - dateB; -->
+        <!-- }); -->
+
+        <!-- // Remove existing rows -->
+        <!-- for (let i = table.rows.length - 1; i > 0; i--) { -->
+            <!-- table.deleteRow(i); -->
+        <!-- } -->
+
+        <!-- // Append sorted rows back to the table -->
+        <!-- rows.forEach(row => { -->
+            <!-- table.appendChild(row); -->
+        <!-- }); -->
+    <!-- } -->
+ </script>
+</body>
+</html>
