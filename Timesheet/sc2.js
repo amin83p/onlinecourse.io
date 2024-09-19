@@ -1,4 +1,4 @@
-const activities = ['LINC', 'EAL', 'MATH', 'Science'];
+const activities = ['MATH', 'SCIENCE', 'ENGLISH', 'FRENCH', 'COMPUTER', 'PROGRAMMING', 'COMMUNICATION'];
 let timeSheetData = []; // Global variable to hold all row data
 
 function addRow() {
