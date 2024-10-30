@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <title>Amin Paknejad Time Sheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: left;
+            background-color: #00796b;
+            color: white;
+            padding: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00796b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e0f2f1;
+        }
+
+        .day-header {
+            background-color: #b2ebf2;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .friday {
+            background-color: #e6f3ff; /* Light blue for Friday */
+        }
+
+        .weekend {
+            background-color: #ffdddd; /* Light red for Saturday and Sunday */
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        input[type="text"], select {
+            width: calc(100% - 12px);
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #00796b;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #004d40;
+        }
+
+        #totalTimes {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .submit-container {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #004d40;
+        }
+
+        #summaryTable {
+            width: 50%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        #summaryTable th, #summaryTable td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #summaryTable th {
+            background-color: #e0f2f1;
+            font-weight: bold;
+        }
+
+        #summaryTable tr:last-child {
+            font-weight: bold;
+            background-color: #b2ebf2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://cdn-icons-png.flaticon.com/512/2399/2399925.png" alt="Amin Paknejad Logo" width="100">
+        <h2>Time Sheet</h2>
+        <div class="employee-info">
+            <h3>Employee Name: Amin Paknejad</h3>
+            <h3>Position: Instructor</h3>
+        </div>
+    </header>
+
+    <table id="timeSheet">
+        <thead>
+            <tr>
+                <th>Day #</th>
+                <th>Day Name</th>
+                <th>Activity</th>
+                <th>Time (hours)</th>
+                <th>Student Name</th>
+                <th>Comment</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Days will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <table id="summaryTable">
+        <thead>
+            <tr>
+                <th>Activity</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Summary rows will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <div class="submit-container">
+        <button class="submit-btn" onclick="submitForm()">Verify the Time Sheet</button>
+    </div>
+
+    <script>
+        const activities = ['MATH', 'SCIENCE', 'ENGLISH', 'FRENCH', 'COMPUTER', 'PROGRAMMING', 'COMMUNICATION'];
+        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        let timeSheetData = {};
+        
+        function initializeTimesheet() {
+            const tbody = document.getElementById("timeSheet").getElementsByTagName('tbody')[0];
+            for (let day = 1; day <= 15; day++) {
+                const dayRow = tbody.insertRow();
+                const dayName = dayNames[(day - 1) % 7];
+                const dayClass = getDayClass((day - 1) % 7);
+                dayRow.innerHTML = `
+                    <td class="day-header ${dayClass}">${day}</td>
+                    <td class="day-header ${dayClass}">${dayName}</td>
+                    <td colspan="5"><button onclick="addRow(${day})">Add Entry</button></td>
+                `;
+                dayRow.id = `day-${day}`;
+                timeSheetData[day] = [];
+            }
+            populateTimeSheetWithSampleData(); // Populate with sample data after initializing
+        }
+        
+        function getDayClass(dayIndex) {
+            if (dayIndex === 4) return 'friday';
+            if (dayIndex === 5 || dayIndex === 6) return 'weekend';
+            return '';
+        }
+        
+        function addRow(day) {
+            const newRow = {
+                id: Date.now(),
+                activity: activities[0],
+                time: 0.5,
+                studentName: '',
+                comment: ''
+            };
+            alert(newRow.id);
+            timeSheetData[day].push(newRow);
+            renderNewRow(day, newRow);
+            updateTotalTimes();
+        }
+        
+        function renderNewRow(day, rowData) {
+            const table = document.getElementById("timeSheet");
+            const dayRow = document.getElementById(`day-${day}`);
+            
+            const newRow = table.insertRow(dayRow.rowIndex + timeSheetData[day].length);
+            newRow.setAttribute('data-day', day);
+        
+            const dayClass = getDayClass((day - 1) % 7);
+            newRow.className = dayClass;
+        
+            newRow.innerHTML = `
+                <td></td>
+                <td></td>
+                <td>
+                    <select onchange="updateRowData(${day}, ${rowData.id}, 'activity', this.value)">
+                        ${activities.map(activity => `<option value="${activity}" ${activity === rowData.activity ? 'selected' : ''}>${activity}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <select onchange="updateRowData(${day}, ${rowData.id}, 'time', this.value)">
+                        ${Array.from({length: 17}, (_, i) => `<option value="${(i + 1) / 2}" ${(i + 1) / 2 === rowData.time ? 'selected' : ''}>${(i + 1) / 2}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <input type="text" value="${rowData.studentName}" placeholder="Enter student name" onchange="updateRowData(${day}, ${rowData.id}, 'studentName', this.value)">
+                </td>
+                <td>
+                    <input type="text" value="${rowData.comment}" placeholder="Enter comment" onchange="updateRowData(${day}, ${rowData.id}, 'comment', this.value)">
+                </td>
+                <td>
+                    <button class="delete-btn" onclick="deleteRow(${day}, ${rowData.id})">Delete</button>
+                </td>
+            `;
+        }
+        
+        function renderDay(day) {
+            const existingRows = document.querySelectorAll(`[data-day="${day}"]`);
+            existingRows.forEach(row => row.remove());
+        
+            timeSheetData[day].forEach((rowData) => {
+                renderNewRow(day, rowData);
+            });
+        }
+        
+        function deleteRow(day, id) {
+            timeSheetData[day] = timeSheetData[day].filter(row => row.id !== id);
+            renderDay(day);
+            updateTotalTimes();
+        }
+        
+        function updateRowData(day, id, field, value) {
+            const rowIndex = timeSheetData[day].findIndex(row => row.id === id);
+            if (rowIndex !== -1) {
+                timeSheetData[day][rowIndex][field] = field === 'time' ? parseFloat(value) : value;
+                updateTotalTimes();
+            }
+        }
+        
+        function updateTotalTimes() {
+            const totalTimes = {};
+            let grandTotal = 0;
+        
+            Object.values(timeSheetData).forEach(dayData => {
+                dayData.forEach(row => {
+                    if (!totalTimes[row.activity]) {
+                        totalTimes[row.activity] = 0;
+                    }
+                    totalTimes[row.activity] += parseFloat(row.time);
+                    grandTotal += parseFloat(row.time);
+                });
+            });
+        
+            const summaryTableBody = document.getElementById('summaryTable').getElementsByTagName('tbody')[0];
+            summaryTableBody.innerHTML = '';
+        
+            for (const [activity, time] of Object.entries(totalTimes)) {
+                const row = summaryTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${activity}</td>
+                    <td>${time.toFixed(1)} hours</td>
+                `;
+            }
+        
+            const totalRow = summaryTableBody.insertRow();
+            totalRow.innerHTML = `
+                <td>Total</td>
+                <td>${grandTotal.toFixed(1)} hours</td>
+            `;
+        }
+        
+        function populateTimeSheetWithSampleData() {
+            const sampleData = {
+                1: [
+                    {id: Date.now(), activity: 'MATH', time: 2, studentName: 'John Smith', comment: 'Algebra review'},
+                    {id: Date.now()+1, activity: 'SCIENCE', time: 3, studentName: 'Emily Johnson', comment: 'Chemistry lab'},
+                    {id: Date.now()+2, activity: 'ENGLISH', time: 2, studentName: 'Michael Brown', comment: 'Essay writing'}
+                ],
+                2: [
+                    {id: Date.now()+3, activity: 'FRENCH', time: 2.5, studentName: 'Sophie Martin', comment: 'Conversational practice'},
+                    {id: Date.now()+4, activity: 'COMPUTER', time: 3, studentName: 'David Lee', comment: 'Introduction to spreadsheets'},
+                    {id: Date.now()+5, activity: 'PROGRAMMING', time: 2, studentName: 'Alex Wong', comment: 'Python basics'}
+                ],
+                3: [
+                    {id: Date.now()+6, activity: 'MATH', time: 3, studentName: 'Sarah Davis', comment: 'Geometry concepts'},
+                    {id: Date.now()+7, activity: 'SCIENCE', time: 2.5, studentName: 'Ryan Taylor', comment: 'Physics experiment'},
+                    {id: Date.now()+8, activity: 'COMMUNICATION', time: 2, studentName: 'Emma Wilson', comment: 'Public speaking skills'}
+                ],
+                4: [
+                    {id: Date.now()+9, activity: 'ENGLISH', time: 2.5, studentName: 'Olivia Thompson', comment: 'Literature analysis'},
+                    {id: Date.now()+10, activity: 'FRENCH', time: 2, studentName: 'Lucas Dubois', comment: 'Grammar exercises'},
+                    {id: Date.now()+11, activity: 'PROGRAMMING', time: 3, studentName: 'Ethan Chen', comment: 'JavaScript fundamentals'}
+                ],
+                5: [
+                    {id: Date.now()+12, activity: 'MATH', time: 2, studentName: 'Ava Rodriguez', comment: 'Trigonometry'},
+                    {id: Date.now()+13, activity: 'SCIENCE', time: 2.5, studentName: 'Noah Campbell', comment: 'Biology dissection'},
+                    {id: Date.now()+14, activity: 'COMPUTER', time: 3, studentName: 'Sophia Kim', comment: 'Web design basics'}
+                ],
+                8: [
+                    {id: Date.now()+15, activity: 'ENGLISH', time: 3, studentName: 'Liam Parker', comment: 'Creative writing workshop'},
+                    {id: Date.now()+16, activity: 'FRENCH', time: 2.5, studentName: 'Zoe Lambert', comment: 'Oral presentation prep'},
+                    {id: Date.now()+17, activity: 'COMMUNICATION', time: 2, studentName: 'Mia Johnson', comment: 'Group discussion techniques'}
+                ],
+                9: [
+                    {id: Date.now()+17, activity: 'MATH', time: 2.5, studentName: 'Jackson Lee', comment: 'Statistics introduction'},
+                    {id : Date.now()+19, activity: 'SCIENCE', time: 3, studentName: 'Isabella Garcia', comment: 'Environmental science project'},
+                    {id: Date.now()+20, activity: 'PROGRAMMING', time: 2, studentName: 'Aiden Patel', comment: 'Object-oriented programming'}
+                ],
+                11: [
+                    {id: Date.now()+21, activity: 'COMPUTER', time: 3.5, studentName: 'Chloe Anderson', comment: 'Database management'},
+                    {id: Date.now()+22, activity: 'ENGLISH', time: 2, studentName: 'Daniel Murphy', comment: 'Shakespearean analysis'},
+                    {id: Date.now()+23, activity: 'MATH', time: 2, studentName: 'Grace Taylor', comment: 'Calculus basics'}
+                ],
+                12: [
+                    {id: Date.now()+24, activity: 'SCIENCE', time: 3, studentName: 'Benjamin Wright', comment: 'Astronomy observation'},
+                    {id: Date.now()+25, activity: 'FRENCH', time: 2.5, studentName: 'Audrey Moreau', comment: 'Advanced vocabulary'},
+                    {id: Date.now()+26, activity: 'COMMUNICATION', time: 2, studentName: 'Leo Nguyen', comment: 'Debate preparation'}
+                ],
+                15: [
+                    {id: Date.now()+27, activity: 'PROGRAMMING', time: 3, studentName: 'Ella Chen', comment: 'Mobile app development'},
+                    {id: Date.now()+28, activity: 'MATH', time: 2.5, studentName: 'Owen Scott', comment: 'Linear algebra'},
+                    {id: Date.now()+29, activity: 'ENGLISH', time: 2, studentName: 'Avery Thompson', comment: 'Research paper guidance'}
+                ]
+            };
+        
+            for (const [day, entries] of Object.entries(sampleData)) {
+             console.log(day,entries[0].id);
+             console.log(day,entries[1].id);
+             console.log(day,entries[2].id);
+            // alert(entries[1]);
+            // alert(entries[2]);
+                timeSheetData[day].push(entries[0]);
+                renderNewRow(day, entries[0]);
+                timeSheetData[day].push(entries[1]);
+                renderNewRow(day, entries[1]);
+                timeSheetData[day].push(entries[2]);
+                renderNewRow(day, entries[2]);
+            }
+            updateTotalTimes();
+        }
+        
+        function submitForm() {
+              history.back();
+            // console.log("Submitting Data:", timeSheetData);
+            // alert("Form submitted! Check console for data.");
+        }
+        
+        window.onload = initializeTimesheet;
+        </script>
+</body>
+</html>
