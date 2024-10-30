@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <title>Employee Timesheet Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: left;
+            background-color: #00796b;
+            color: white;
+            padding: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #00796b;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #e0f2f1;
+        }
+        .completed {
+            color: green;
+            font-size: 1.2em;
+        }
+        .not-completed {
+            color: red;
+            font-size: 1.2em;
+        }
+        .verified {
+            color: blue;
+            font-size: 1.2em;
+        }
+        a {
+            color: #00796b;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        th {
+            background-color: #e0f2f1;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background-color: #b2dfdb;
+        }
+
+        #summaryTable {
+            width: 50%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        #summaryTable th, #summaryTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #summaryTable th {
+            background-color: #e0f2f1;
+            font-weight: bold;
+        }
+
+        #summaryTable tr:last-child {
+            font-weight: bold;
+            background-color: #b2ebf2;
+        }   
+        button {
+            padding: 8px 16px; /* Increased button size */
+            background-color: #00796b; /* Button color */
+            color: white; /* Button text color */
+            border: none; /* No border */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 14px; /* Increased font size */
+        }
+
+        button:hover {
+            background-color: #004d40; /* Darker shade on hover */
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://cdn-icons-png.flaticon.com/512/2399/2399925.png" alt="Amin Paknejad Logo" width="100">
+        <h2>Employee Timesheet Summary</h2>
+        <div class="employee-info">
+            <h3>Employee Name: Slavica Sero</h3>
+            <h3>Position: General Manager</h3>
+        </div>
+    </header>
+
+    <h2 style="text-align: left;">2024 - October - 2nd - Time Sheet</h2>
+
+
+    <table id="timesheetSummary">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Employee ID</th>
+                <th onclick="sortTable(1)">Employee Name</th>
+                <th onclick="sortTable(2)">Total Hours</th>
+                <th onclick="sortTable(3)">Completed</th>
+                <th onclick="sortTable(4)">Active</th>
+                <th onclick="sortTable(5)">Verified</th>
+                <th>SMS</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added here dynamically -->
+        </tbody>
+    </table>
+    
+            <table id="summaryTable">
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Total Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added here dynamically -->
+            </tbody>
+        </table>
+
+    <script>
+    const employees = [
+        { name: "John Doe", id: 1001, completed: true, active: true, verified: true },
+        { name: "Jane Smith", id: 1502, completed: true, active: true, verified: false },
+        { name: "Bob Johnson", id: 2103, completed: false, active: true, verified: false },
+        { name: "Alice Brown", id: 3204, completed: true, active: true, verified: true },
+        { name: "Charlie Davis", id: 4305, completed: true, active: true, verified: false },
+        { name: "Eva White", id: 5406, completed: false, active: false, verified: false },
+        { name: "Frank Miller", id: 6507, completed: true, active: true, verified: true },
+        { name: "Grace Lee", id: 7608, completed: true, active: true, verified: true },
+        { name: "Henry Wilson", id: 8709, completed: true, active: true, verified: false },
+        { name: "Ivy Taylor", id: 9810, completed: false, active: true, verified: false },
+        { name: "Jack Robinson", id: 2911, completed: true, active: true, verified: true },
+        { name: "Karen Moore", id: 3012, completed: true, active: true, verified: false },
+        { name: "Liam Harris", id: 4113, completed: true, active: true, verified: true },
+        { name: "Mia Clark", id: 5214, completed: false, active: false, verified: false },
+        { name: "Noah Martin", id: 6315, completed: true, active: true, verified: true },
+        { name: "Olivia Johnson", id: 7416, completed: true, active: true, verified: false },
+        { name: "Peter Brown", id: 8517, completed: false, active: true, verified: false },
+        { name: "Quinn Davis", id: 9618, completed: true, active: true, verified: true },
+        { name: "Rachel White", id: 1719, completed: true, active: true, verified: false },
+        { name: "Samuel Miller", id: 2820, completed: false, active: false, verified: false },
+        { name: "Tara Lee", id: 3921, completed: true, active: true, verified: true },
+        { name: "Ulysses Wilson", id: 4022, completed: true, active: true, verified: false },
+        { name: "Victoria Taylor", id: 5123, completed: false, active: true, verified: false },
+        { name: "William Robinson", id: 6224, completed: true, active: true, verified: true },
+        { name: "Xena Moore", id: 7325, completed: true, active: true, verified: false }
+    ];
+
+    function populateTable() {
+    const tbody = document.getElementById("timesheetSummary").getElementsByTagName('tbody')[0];
+    
+        employees.forEach(emp => {
+            const hours = emp.completed ? Math.floor(Math.random() * (120 - 10 + 1)) + 10 : 0;
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${emp.id}</td>
+                <td><a href="#" onclick="viewTimesheet('${emp.name}')">${emp.name}</a></td>
+                <td data-hours="${hours}">${hours}</td>
+                <td>${emp.completed ? '<span class="completed">✓</span>' : '<span class="not-completed">✗</span>'}</td>
+                <td><input type="checkbox" ${emp.active ? 'checked' : ''} onclick="return false;"></td>
+                <td>${emp.verified ? '<span class="verified">✓</span>' : ''}</td>
+            `;
+        });
+    }   
+    function viewTimesheet(name) {
+        // This function would typically load and display the employee's timesheet
+        alert(`Viewing timesheet for ${name}`);
+        // In a real application, you might redirect to a new page or open a modal with the timesheet details
+    }
+    function sortTable(column) {
+    const table = document.getElementById("timesheetSummary");
+    const tbody = table.getElementsByTagName("tbody")[0];
+    const rows = Array.from(tbody.getElementsByTagName("tr"));
+
+    rows.sort((a, b) => {
+        let aValue = a.getElementsByTagName("td")[column].textContent;
+        let bValue = b.getElementsByTagName("td")[column].textContent;
+
+        if (column === 0 || column === 2) { // Employee ID or Total Hours
+            return parseInt(aValue) - parseInt(bValue);
+        } else if (column === 3 || column === 4 || column === 5) { // Completed, Active, Verified
+            return (bValue === "✓") - (aValue === "✓");
+        } else { // Employee Name
+            return aValue.localeCompare(bValue);
+        }
+    });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }   
+
+    const activities = ['MATH', 'SCIENCE', 'ENGLISH', 'FRENCH', 'COMPUTER', 'PROGRAMMING', 'COMMUNICATION'];
+
+    function populateTable() {
+    const tbody = document.getElementById("timesheetSummary").getElementsByTagName('tbody')[0];
+    let activityHours = {};
+    activities.forEach(activity => activityHours[activity] = 0);
+    
+    employees.forEach((emp, index) => {
+        const totalHours = emp.completed ? Math.floor(Math.random() * (120 - 10 + 1)) + 10 : 0;
+        const row = tbody.insertRow();
+        
+        // Assign hours to activities
+        let remainingHours = totalHours;
+        let employeeActivities = {};
+        activities.forEach(activity => {
+            if (remainingHours > 0) {
+                const hours = Math.floor(Math.random() * (remainingHours + 1));
+                employeeActivities[activity] = hours;
+                activityHours[activity] += hours;
+                remainingHours -= hours;
+            } else {
+                employeeActivities[activity] = 0;
+            }
+        });
+        
+        row.innerHTML = `
+            <td>${emp.id}</td>
+            <td><a href="sample.html" onclick="viewTimesheet('${emp.name}', ${JSON.stringify(employeeActivities)})">${emp.name}</a></td>
+            <td data-hours="${totalHours}">${totalHours}</td>
+            <td>${emp.completed ? '<span class="completed">✓</span>' : '<span class="not-completed">✗</span>'}</td>
+            <td><input type="checkbox" ${emp.active ? 'checked' : ''} onclick="return false;"></td>
+            <td>${emp.verified ? '<span class="verified">✓</span>' : ''}</td>
+            <td><button onclick="sendNotification('sms', ${index})">Send SMS (0)</button></td>
+            <td><button onclick="sendNotification('email', ${index})">Send Email (0)</button></td>
+        `;
+    });
+
+    // Populate summary table
+    const summaryTbody = document.getElementById("summaryTable").getElementsByTagName('tbody')[0];
+    let totalSum = 0;
+    activities.forEach(activity => {
+        const row = summaryTbody.insertRow();
+        row.innerHTML = `
+            <td>${activity}</td>
+            <td>${activityHours[activity]}</td>
+        `;
+        totalSum += activityHours[activity];
+    });
+    
+    // Add total row
+    const totalRow = summaryTbody.insertRow();
+    totalRow.innerHTML = `
+        <td>Total</td>
+        <td>${totalSum}</td>
+    `;
+}
+function sendNotification(type, employeeIndex) {
+    const button = event.target;
+    const currentCount = parseInt(button.textContent.match(/\d+/)[0]);
+    const newCount = currentCount + 1;
+    button.textContent = `Send ${type.charAt(0).toUpperCase() + type.slice(1)} (${newCount})`;
+}
+
+function viewTimesheet(name, activities) {
+    let message = `Timesheet for ${name}:\n`;
+    for (const [activity, hours] of Object.entries(activities)) {
+        if (hours > 0) {
+            message += `${activity}: ${hours} hours\n`;
+        }
+    }
+    alert(message);
+}
+
+    window.onload = populateTable;
+    </script>
+</body>
+</html>
